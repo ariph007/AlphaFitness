@@ -1,22 +1,21 @@
-import { Link } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from "react-native";
+import FoodListItem from "../components/FoodListItem";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <Link href={"/dashboard"}>Go to Dashboard</Link>
-      <StatusBar style="auto" />
-    </View>
+      <FoodListItem label="Pizza" cal={75} brand="Dominos" />
+      <FoodListItem label="Burger" cal={212} brand="Burger King" />
+  </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    padding: 10,
+    gap: 5
   },
 });
