@@ -12,37 +12,8 @@ import { Link } from "expo-router";
 import FoodListItem, { Iitem } from "../components/FoodListItem";
 import { gql, useQuery } from "@apollo/client";
 import { dateFormatter } from "../utils/dateFormatter";
-import FoodLogListItem, { IitemLog } from "../components/FoodlOGListItem";
+import FoodLogListItem, { IitemLog } from "../components/FoodLogListItem";
 
-const foodItems: Iitem[] = [
-  {
-    food: {
-      foodId: "123",
-      label: "Pizza",
-      nutrients: {
-        ENERC_KCAL: 75,
-      },
-    },
-  },
-  {
-    food: {
-      foodId: "124",
-      label: "Burger",
-      nutrients: {
-        ENERC_KCAL: 125,
-      },
-    },
-  },
-  {
-    food: {
-      foodId: "125",
-      label: "Chicken",
-      nutrients: {
-        ENERC_KCAL: 213,
-      },
-    },
-  },
-];
 
 const query = gql`
   query foodLogsForDate($date: Date!, $user_id: String!) {
@@ -57,6 +28,14 @@ const query = gql`
   }
 `;
 
+const queryTotal = gql`
+query kcalTotalForDate($user_id: String!, $date: Date!) {
+  kcalTotalForDate(user_id: $user_id,date: $date){
+    total_kcal
+  }
+}
+`
+
 const HomeScreen = () => {
   const user_id = "alex001";
 
@@ -67,6 +46,16 @@ const HomeScreen = () => {
     }
   })
 
+  const {data: dataTotal, loading:loadingTotal, error:errorTotal} = useQuery(queryTotal, {
+    variables:{
+      date: dateFormatter(new Date),
+      user_id
+    }
+  })
+
+
+  console.log("data total: " +dataTotal.kcalTotalForDate.total_kcal);
+
   if(loading){
     return<ActivityIndicator />
   }
@@ -74,14 +63,13 @@ const HomeScreen = () => {
   if(error){
     return <Text>Failed to fetch data...</Text>
   }
-  console.log(data);
   
 
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
         <Text style={styles.headerLogged}>Calories</Text>
-        <Text>1770 - 360 = 1623</Text>
+        <Text>{dataTotal.kcalTotalForDate.total_kcal}</Text>
       </View>
       <View style={styles.wrapper}>
         <Text style={styles.headerLogged}>Today logged food</Text>
