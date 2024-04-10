@@ -1,99 +1,95 @@
 import {
-  ActivityIndicator,
-  Button,
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
   View,
+  Text,
+  FlatList,
+  StyleSheet,
+  Button,
+  Pressable,
 } from "react-native";
-import FoodListItem from "../components/FoodListItem";
-import { useState } from "react";
-import { gql, useLazyQuery, useQuery } from "@apollo/client";
+import React from "react";
+import { Link } from "expo-router";
+import FoodListItem, { Iitem } from "../components/FoodListItem";
 
-const query = gql`
-  query search($ingr: String) {
-  search(ingr: $ingr) {
-    text
-    hints {
-      food {
-        label
-        nutrients {
-          ENERC_KCAL
-        }
-        foodId
-      }
-    }
-  }
-}`;
-
-const foodItems = [
-  { label: "Pizza", cal: 75, brand: "Dominos" },
-  { label: "Burger", cal: 122, brand: "Burger King" },
-  { label: "Chicken", cal: 253, brand: "KFC" },
+const foodItems: Iitem[] = [
+  {
+    food: {
+      foodId: "123",
+      label: "Pizza",
+      nutrients: {
+        ENERC_KCAL: 75,
+      },
+    },
+  },
+  {
+    food: {
+      foodId: "124",
+      label: "Burger",
+      nutrients: {
+        ENERC_KCAL: 125,
+      },
+    },
+  },
+  {
+    food: {
+      foodId: "125",
+      label: "Chicken",
+      nutrients: {
+        ENERC_KCAL: 213,
+      },
+    },
+  },
 ];
 
-export default function SearchScreen() {
-  const [search, setSearch] = useState("");
-  const [runSearch, {data, loading, error}] = useLazyQuery(query, { variables: {ingr: "Chocolate"}})
-
-  const performSearch = () => {
-    runSearch({variables:{ingr: search}});
-  };
-
-  if(error){
-    return (
-      <Text>Error</Text>
-    )
-  }
-
-  const items= data?.search?.hints || [];
+const HomeScreen = () => {
   return (
     <View style={styles.container}>
-      <TextInput
-        value={search}
-        onChangeText={setSearch}
-        placeholder="Search..."
-        style={styles.search}
-      />
-      {search && (
-        <Pressable onPress={performSearch} style={styles.btnSearch}>
-          <Text style={styles.btnTxtSearch}>Search</Text>
-        </Pressable>
-      )}
-      {loading && <ActivityIndicator />}
+      <View style={styles.wrapper}>
+        <Text style={styles.headerLogged}>Calories</Text>
+        <Text>1770 - 360 = 1623</Text>
+      </View>
+      <View style={styles.wrapper}>
+        <Text style={styles.headerLogged}>Today logged food</Text>
+        <Link href="/search" asChild>
+          <Pressable style={styles.btnAddFood}>
+            <Text style={styles.btnTxtAddFood}>ADD FOOD</Text>
+          </Pressable>
+        </Link>
+      </View>
       <FlatList
-        data={items}
-        renderItem={({ item }) => (
-          <FoodListItem food={item.food} />
-        )}
-        contentContainerStyle={{ gap: 5 }}
-        ListEmptyComponent={<Text>Search a food...</Text>}
+        data={foodItems}
+        contentContainerStyle={{gap:5}}
+        renderItem={({ item }) => <FoodListItem food={item.food} />}
       />
     </View>
   );
-}
+};
+
+export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "white",
     flex: 1,
-    backgroundColor: "#fff",
     padding: 10,
-    gap: 10,
+    gap: 10
   },
-  search: {
-    backgroundColor: "gainsboro",
-    padding: 10,
-    borderRadius: 20,
+  wrapper: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
-  btnTxtSearch: {
+  headerLogged: {
+    fontSize: 18,
+    fontWeight: "500",
+    flex: 1,
+    color: "dimgray"
+  },
+  btnTxtAddFood: {
     color: "royalblue",
     fontSize: 16,
-    fontWeight: "600"
+    fontWeight: "600",
   },
-  btnSearch:{
+  btnAddFood: {
     flexDirection: "row",
-    justifyContent: "center"
-  }
+    justifyContent: "center",
+  },
 });
