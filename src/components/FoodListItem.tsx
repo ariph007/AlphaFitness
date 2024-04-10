@@ -2,18 +2,22 @@ import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
 import { AntDesign } from "@expo/vector-icons";
 
-type Iitem = {
-    label: string,
-    cal: number,
-    brand: string
+export type Iitem = {
+  food: {
+    label: String,
+    nutrients: {
+      "ENERC_KCAL": number
+    },
+    foodId: string
+  }
   }
 
-const FoodListItem = ({label, cal, brand}: Iitem) => {
+const FoodListItem = (item: Iitem) => {
     return (
         <View style={styles.container}> 
           <View style={styles.listWrapper}>
-            <Text style={styles.title}>{label}</Text>
-            <Text style={styles.bodyItem}>{cal} cal, {brand}</Text>
+            <Text style={styles.title}>{item.food.label}</Text>
+            <Text style={styles.bodyItem}>{item.food.nutrients.ENERC_KCAL} cal</Text>
           </View>
           <AntDesign name="pluscircleo" size={24} color="royalblue" />
         </View>

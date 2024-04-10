@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Button,
   FlatList,
   Pressable,
@@ -9,6 +10,23 @@ import {
 } from "react-native";
 import FoodListItem from "../components/FoodListItem";
 import { useState } from "react";
+import { gql, useLazyQuery, useQuery } from "@apollo/client";
+
+const query = gql`
+  query search($ingr: String) {
+  search(ingr: $ingr) {
+    text
+    hints {
+      food {
+        label
+        nutrients {
+          ENERC_KCAL
+        }
+        foodId
+      }
+    }
+  }
+}`;
 
 const foodItems = [
   { label: "Pizza", cal: 75, brand: "Dominos" },
@@ -16,14 +34,21 @@ const foodItems = [
   { label: "Chicken", cal: 253, brand: "KFC" },
 ];
 
-export default function App() {
+export default function SearchScreen() {
   const [search, setSearch] = useState("");
+  const [runSearch, {data, loading, error}] = useLazyQuery(query, { variables: {ingr: "Chocolate"}})
 
   const performSearch = () => {
-    console.warn("Search :" + search);
-    setSearch("");
+    runSearch({variables:{ingr: search}});
   };
 
+  if(error){
+    return (
+      <Text>Error</Text>
+    )
+  }
+
+  const items= data?.search?.hints || [];
   return (
     <View style={styles.container}>
       <TextInput
@@ -37,12 +62,14 @@ export default function App() {
           <Text style={styles.btnTxtSearch}>Search</Text>
         </Pressable>
       )}
+      {loading && <ActivityIndicator />}
       <FlatList
-        data={foodItems}
+        data={items}
         renderItem={({ item }) => (
-          <FoodListItem label={item.label} cal={item.cal} brand={item.brand} />
+          <FoodListItem food={item.food} />
         )}
         contentContainerStyle={{ gap: 5 }}
+        ListEmptyComponent={<Text>Search a food...</Text>}
       />
     </View>
   );
