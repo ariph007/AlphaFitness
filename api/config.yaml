@@ -1,0 +1,8 @@
+configurationset:
+  - configuration:
+      name: postgresql_config
+      uri: secret
+  - configuration:
+      name: secret
+      app_id: secret
+      app_key: secret
